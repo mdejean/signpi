@@ -1,0 +1,12 @@
+[Unit]
+Description=USB Gadget
+After=systemd-modules-load.service
+ 
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/composite_gadget.sh up
+ExecStop=/usr/local/bin/composite_gadget.sh down
+ 
+[Install]
+WantedBy=multi-user.target
