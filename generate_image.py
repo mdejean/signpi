@@ -25,37 +25,33 @@ def main():
     BULLET_SIZE = 14
     ORDER_WIDTH = 8
 
-    draw.text((0, line1_mid),
+    draw.text((0, 0),
               "1.",
               font=fifteen,
-              anchor='lm',
+              anchor='lt',
               fill=(255, 255, 255))
-    draw.text((0, line2_mid),
+    draw.text((0, DISPLAY_HEIGHT),
               "3.",
               font=fifteen,
-              anchor='lm',
+              anchor='lb',
               fill=(255, 255, 255))
 
-    draw.arc([(ORDER_WIDTH + 0, 0), (ORDER_WIDTH + BULLET_SIZE, BULLET_SIZE)],
-             0,
-             360,
-             fill=(255, 255, 255),
+    draw.ellipse([(ORDER_WIDTH + 0, 0), (ORDER_WIDTH + BULLET_SIZE, BULLET_SIZE)],
+             fill=(0, 255, 0),
              width=2)
     draw.text((ORDER_WIDTH + BULLET_SIZE / 2 + 1, BULLET_SIZE / 2),
               "4",
               font=pm,
               anchor='mm',
-              fill=(255, 255, 255))
+              fill=(0, 0, 0))
     draw.text((ORDER_WIDTH + BULLET_SIZE + 4, line1_mid),
               "Brooklyn Bridge - City Hall",
               font=pokemon,
               anchor='lm',
               fill=(255, 255, 255))
-    draw.arc([(ORDER_WIDTH + 0, DISPLAY_HEIGHT - 1 - BULLET_SIZE),
+    draw.ellipse([(ORDER_WIDTH + 0, DISPLAY_HEIGHT - 1 - BULLET_SIZE),
               (ORDER_WIDTH + BULLET_SIZE, DISPLAY_HEIGHT - 1)],
-             0,
-             360,
-             fill=(255, 255, 255),
+             fill=(127, 0, 0),
              width=2)
     draw.text((ORDER_WIDTH + BULLET_SIZE / 2 + 1,
                DISPLAY_HEIGHT - 1 - BULLET_SIZE / 2),
@@ -82,8 +78,20 @@ def main():
               text="6 min",
               anchor="rm",
               font=pokemon)
-    img.show()
-
+    
+    output = None
+    with open('template.bin', 'rb') as f:
+        output = f.read()
+    
+    # output is column-first
+    img = img.transpose(Image.Transpose.TRANSPOSE)
+    output += bytes([
+        (pixel[0] >> 6) | ((pixel[1] >> 6) << 2) | ((pixel[2] >> 6) << 4) 
+        for pixel in img.getdata()
+    ])
+    
+    with open('COLOR_01.PRG', 'wb') as f:
+        f.write(output)
 
 if __name__ == '__main__':
     main()
