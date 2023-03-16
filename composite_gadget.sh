@@ -202,7 +202,8 @@ un_usb_up() {
     mkdir -p ${g}/functions/mass_storage.usb0/lun.0
     echo 0 > ${g}/functions/mass_storage.usb0/lun.0/cdrom
     echo 1 > ${g}/functions/mass_storage.usb0/lun.0/removable
-    echo /test_file > ${g}/functions/mass_storage.usb0/lun.0/file
+    echo 0 > ${g}/functions/mass_storage.usb0/lun.0/ro
+    echo /var/local/mass_storage_backing > ${g}/functions/mass_storage.usb0/lun.0/file
 
     # Link everything up and bind the USB device
     ln -s ${g}/functions/ecm.usb0 ${g}/configs/c.1
@@ -228,6 +229,7 @@ un_usb_down() {
         echo "" > ${g}/UDC
     fi
     rm -f ${g}/os_desc/c.1
+    rm -f ${g}/os_desc/c.2
     rm -f ${g}/os_desc/c.3
     rm -f ${g}/configs/c.2/rndis.usb0
     rm -f ${g}/configs/c.1/ecm.usb0
