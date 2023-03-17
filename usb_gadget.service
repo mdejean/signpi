@@ -1,7 +1,8 @@
 [Unit]
 Description=USB Gadget
 After=systemd-modules-load.service
- 
+Wants=sign_startup.service
+Wants=generate_image.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes

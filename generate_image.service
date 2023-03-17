@@ -1,0 +1,9 @@
+[Unit]
+Description=Generate sign image
+Wants=get_data.service
+After=sign_startup.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/signpi/generate_image.py
+WorkingDirectory=/usr/local/share/signpi/

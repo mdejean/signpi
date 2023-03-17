@@ -190,13 +190,14 @@ un_usb_up() {
       if [ -n "$host_mac2" ]; then echo "${host_mac2}" > ${g}/functions/rndis.usb0/host_addr ; fi  
     fi # else gadgetfs chooses random addresses
     
-    # config 3 - mass storage
+    # config 3 - mass storage only
     mkdir ${g}/configs/c.3
     echo "${attr}" > ${g}/configs/c.3/bmAttributes
     echo "${pwr}" > ${g}/configs/c.3/MaxPower
     mkdir ${g}/configs/c.3/strings/0x409
     echo "${cfg3}" > ${g}/configs/c.3/strings/0x409/configuration
 
+    # mass storage function
     modprobe usb_f_mass_storage
     mkdir -p ${g}/functions/mass_storage.usb0
     mkdir -p ${g}/functions/mass_storage.usb0/lun.0
@@ -208,8 +209,10 @@ un_usb_up() {
     # Link everything up and bind the USB device
     ln -s ${g}/functions/ecm.usb0 ${g}/configs/c.1
     ln -s ${g}/functions/rndis.usb0 ${g}/configs/c.2
+    ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.1
+    ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.2
     ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.3
-    ln -s ${g}/configs/c.3 ${g}/os_desc
+    ln -s ${g}/configs/c.2 ${g}/os_desc
     echo "${udc_device}" > ${g}/UDC
     
     if [ -n "$verbose" ]; then echo "Done."; fi

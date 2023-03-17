@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount mass storage backing
+After=systemd-modules-load.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/startup.sh
+ 
+[Install]
+WantedBy=multi-user.target
