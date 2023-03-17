@@ -1,0 +1,2 @@
+# leave crlf in .ini files so they can be used with notepad
+*.ini -text

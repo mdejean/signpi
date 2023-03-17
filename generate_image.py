@@ -32,7 +32,7 @@ def main():
         for pixel in img.getdata()
     ])
 
-    with open('COLOR_01.PRG', 'wb') as f:
+    with open(target, 'wb') as f:
         f.write(output)
 
 
