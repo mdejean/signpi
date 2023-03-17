@@ -37,15 +37,22 @@ def draw(img, trips):
             eta = 'Delay'
         else:
             eta = f'{eta_min} min'
+        if len(routes[route_id]['route_color']) == 6:
+            route_color = '#' + routes[route_id]['route_color']
+        else:
+            route_color = 'black'
+
+        if len(routes[route_id]['route_text_color']) == 6:
+            route_text_color = '#' + routes[route_id]['route_text_color']
+        else:
+            route_text_color = 'white'
 
         draw_trip(img,
                   line_heights[i],
                   order=f'{i+1}.',
                   route=routes[route_id]['route_short_name'],
-                  route_color='#' +
-                  (routes[route_id]['route_color'] or '000000'),
-                  route_text_color='#' +
-                  (routes[route_id]['route_text_color'] or 'ffffff'),
+                  route_color=route_color,
+                  route_text_color=route_text_color,
                   dest=stops[stop_id]['stop_name'],
                   dest_short='x',
                   eta=eta)
