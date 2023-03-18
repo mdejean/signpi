@@ -23,9 +23,11 @@ def draw(img, trips):
         stops = {s['stop_id']: s for s in csv.DictReader(f)}
 
     now = time.time()
+    draw = ImageDraw.Draw(img)
 
     if len(trips) < 2 or max(t['timestamp'] for t in trips) < now - 60 * 5:
-        #TODO: no data screen
+        draw.text((0,0), "No data", anchor='lt')
+        #TODO: better no data screen
         return
     for i in (0, 1):
         route_id = trips[i]['route_id']
@@ -47,7 +49,7 @@ def draw(img, trips):
         else:
             route_text_color = 'white'
 
-        draw_trip(img,
+        draw_trip(draw,
                   line_heights[i],
                   order=f'{i+1}.',
                   route=routes[route_id]['route_short_name'],
@@ -64,7 +66,7 @@ def draw(img, trips):
     #           fill=(255, 255, 255))
 
 
-def draw_trip(img,
+def draw_trip(draw,
               y,
               order,
               route,
@@ -78,7 +80,6 @@ def draw_trip(img,
     pokemon = ImageFont.truetype('Pokemon X and Y.ttf', 11)
     fifteen = ImageFont.truetype('15x5.ttf', 16)
     pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
-    draw = ImageDraw.Draw(img)
 
     LINE_HEIGHT = 16
 
