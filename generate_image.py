@@ -25,8 +25,13 @@ def main():
     with open('template.bin', 'rb') as f:
         output = f.read()
     # output is column-first
-    img = img.transpose(Image.Transpose.TRANSPOSE if hasattr(
-        Image, 'Transpose') else Image.TRANSPOSE)  #PIL 8.1 change
+    transpose_base = Image.Transpose if hasattr(
+        Image, 'Transpose') else Image #PIL 8.1 change
+
+    img = img.transpose(transpose_base.TRANSPOSE)
+    if flip:
+        img = img.transpose(transpose_base.ROTATE_180)
+
     output += bytes([
         (pixel[0] >> 6) | ((pixel[1] >> 6) << 2) | ((pixel[2] >> 6) << 4)
         for pixel in img.getdata()

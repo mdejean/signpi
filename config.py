@@ -8,6 +8,8 @@ sign = config['sign']
 
 mode = sign['mode'] or 'clock'
 
+flip = sign.getboolean('flip', False)
+
 station = sign['station'] or '234'
 
 direction = sign['direction'] or 'north'
