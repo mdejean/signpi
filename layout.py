@@ -8,7 +8,7 @@ from PIL import ImageDraw, ImageFont
 
 LINE_HEIGHT = 16
 
-line_heights = [LINE_HEIGHT / 2, DISPLAY_HEIGHT - LINE_HEIGHT / 2]
+line_heights = [LINE_HEIGHT / 2, DISPLAY_HEIGHT - LINE_HEIGHT / 2 + 1]
 
 BULLET_SIZE = 14
 ORDER_WIDTH = 8
@@ -91,11 +91,11 @@ def draw_trip(img,
     draw.text((0, y), order, font=fifteen, anchor='lm', fill=(255, 255, 255))
     #draw.text((0, line2_mid + 1), # + 1 because this font sucks
 
-    draw.ellipse([(ORDER_WIDTH + 0, y - BULLET_SIZE / 2),
-                  (ORDER_WIDTH + BULLET_SIZE, y + BULLET_SIZE / 2)],
+    draw.ellipse([(ORDER_WIDTH + 0, y - BULLET_SIZE / 2 - 1),
+                  (ORDER_WIDTH + BULLET_SIZE, y + BULLET_SIZE / 2 - 1)],
                  fill=route_color,
                  width=2)
-    draw.text((ORDER_WIDTH + BULLET_SIZE / 2 + 1, y),
+    draw.text((ORDER_WIDTH + BULLET_SIZE / 2 + 1, y - 1),
               text=route,
               font=pm,
               anchor='mm',
