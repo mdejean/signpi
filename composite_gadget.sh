@@ -30,7 +30,7 @@ command="up" # "up" or "down"
 
 vid="0x1d6b" # set your vendor id 
 pid="0x0105" # set your product id 
-devversion="0x0005" # this should be incremented any time there are breaking changes
+devversion="0x0006" # this should be incremented any time there are breaking changes
                 # to this script so that the host OS sees it as a new device and
                 # re-enumerates everything rather than relying on cached values
 mfg="Linux Foundation" # adjust
@@ -43,7 +43,7 @@ m1d=""
 m1h=""
 m2d=""
 m2h=""
-mac="1"
+mac=1
 
 #while getopts 'v:p:P:M:m:c:u:s:d:1:2:3:4h?V' c
 # getopts is not enough, so parse manually
@@ -90,7 +90,9 @@ un_usb_up() {
     mount -t configfs none /sys/kernel/config
     set -e
     usb_ver="0x0200" # USB 2.0
-    dev_class="2" # Communications 
+    dev_class="0xEF" # Composite device
+    dev_sub_class="0x02" # 
+    dev_protocol="0x01" #  
     attr="0xC0" # Self powered
     pwr="0xfe" # 
     cfg1="CDC"
@@ -121,6 +123,8 @@ un_usb_up() {
     mkdir ${g}
     echo "${usb_ver}" > ${g}/bcdUSB
     echo "${dev_class}" > ${g}/bDeviceClass
+    echo "${dev_sub_class}" > ${g}/bDeviceSubClass
+    echo "${dev_protocol}" > ${g}/bDeviceProtocol
     echo "${vid}" > ${g}/idVendor
     echo "${pid}" > ${g}/idProduct
     echo "${devversion}" > ${g}/bcdDevice
@@ -212,7 +216,7 @@ un_usb_up() {
     ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.1
     ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.2
     ln -s ${g}/functions/mass_storage.usb0 ${g}/configs/c.3
-    ln -s ${g}/configs/c.2 ${g}/os_desc
+    ln -s ${g}/configs/c.3 ${g}/os_desc
     echo "${udc_device}" > ${g}/UDC
     
     if [ -n "$verbose" ]; then echo "Done."; fi
@@ -234,8 +238,10 @@ un_usb_down() {
     rm -f ${g}/os_desc/c.1
     rm -f ${g}/os_desc/c.2
     rm -f ${g}/os_desc/c.3
-    rm -f ${g}/configs/c.2/rndis.usb0
     rm -f ${g}/configs/c.1/ecm.usb0
+    rm -f ${g}/configs/c.1/mass_storage.usb0
+    rm -f ${g}/configs/c.2/rndis.usb0
+    rm -f ${g}/configs/c.2/mass_storage.usb0
     rm -f ${g}/configs/c.3/mass_storage.usb0
 
     [ -d ${g}/configs/c.3/strings/0x409 ] && rmdir ${g}/configs/c.3/strings/0x409
