@@ -8,6 +8,7 @@ losetup -d /dev/loop0
 
 set -e
 
+preserve_config=0
 reformat=1
 
 for arg in "$@"; do
