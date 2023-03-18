@@ -67,3 +67,5 @@ echo Finished installing, restarting
 systemctl restart sign_startup
 
 echo Done
+
+# mput *.sh *.service *.timer *.py *.ttf template.bin stops.txt routes.txt config.ini
