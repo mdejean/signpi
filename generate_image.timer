@@ -5,6 +5,7 @@ Description=Generate sign image once a minute
 # Wait 5s to hopefully have network fully up
 OnBootSec=5s
 OnUnitActiveSec=1m
+AccuracySec=1s
 
 [Install]
 WantedBy=timers.target

@@ -32,5 +32,5 @@ network={{
     os.system("wpa_cli reconfigure")
 
 
-if __file__ == '__main__':
+if __name__ == '__main__':
     main()
