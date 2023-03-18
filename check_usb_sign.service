@@ -1,0 +1,10 @@
+[Unit]
+Description=Stop usb gadget after a few seconds if Full Speed (sign) and not High Speed (computer)
+Requires=usb_gadget.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/check_usb_speed.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -2,7 +2,9 @@
 Description=USB Gadget
 After=systemd-modules-load.service
 Wants=sign_startup.service
-Wants=generate_image.service
+Wants=check_usb_sign.timer
+Before=check_usb_sign.timer
+
 [Service]
 Type=oneshot
 RemainAfterExit=yes
