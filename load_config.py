@@ -7,7 +7,11 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read(['/media/mass_storage_gadget/config.ini', 'config.ini'])
+config.read('config.ini')
+try:
+    config.read('/media/mass_storage_gadget/config.ini')
+except:
+    pass
 
 
 def main():
@@ -21,7 +25,8 @@ country="{wlan['country']}"
 network={{
         ssid="{wlan['ssid']}"
         psk="{wlan['psk']}"
-}}"""
+}}
+"""
     print("updating /etc/wpa_supplicant/wpa_supplicant.conf to\n" +
           wpa_supplicant_conf)
 

@@ -5,6 +5,7 @@ After=systemd-modules-load.service
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/local/bin/startup.sh
+WorkingDirectory=/usr/local/share/signpi/
  
 [Install]
 WantedBy=multi-user.target
