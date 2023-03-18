@@ -7,6 +7,6 @@ mount -o umask=000 -t vfat /dev/loop0 /media/mass_storage_gadget
 
 sleep 5
 
-systemctl restart dhcpcd
+#systemctl restart dhcpcd
 
-/usr/local/lib/signpi/load_config.py
+#/usr/local/lib/signpi/load_config.py
