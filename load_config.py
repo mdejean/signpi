@@ -17,24 +17,9 @@ except:
 def main():
     wlan = config['wlan']
 
-    wpa_supplicant_conf = \
-        f"""ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-country="{wlan['country']}"
+    os.system(f"raspi-config nonint do_wifi_country '{wlan['country']}'")
 
-network={{
-        ssid="{wlan['ssid']}"
-        psk="{wlan['psk']}"
-}}
-"""
-    print("updating /etc/wpa_supplicant/wpa_supplicant.conf to\n" +
-          wpa_supplicant_conf)
-
-    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w") as f:
-        f.write(wpa_supplicant_conf)
-    # trigger wpa_suplicant to reload the conf
-
-    os.system("wpa_cli reconfigure")
+    os.system(f"raspi-config nonint do_wifi_ssid_passphrase '{wlan['ssid']}' '{wlan['psk']}'")
 
 
 if __name__ == '__main__':
