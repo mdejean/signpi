@@ -86,16 +86,10 @@ def draw_trip(draw,
     fifteen = ImageFont.truetype('15x5.ttf', 16)
     pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
 
-    LINE_HEIGHT = 16
-
-    line1_mid = LINE_HEIGHT / 2
-    line2_mid = DISPLAY_HEIGHT - LINE_HEIGHT / 2
-
     BULLET_SIZE = 14
     ORDER_WIDTH = 8
 
     draw.text((0, y), order, font=fifteen, anchor='lm', fill=(255, 255, 255))
-    #draw.text((0, line2_mid + 1), # + 1 because this font sucks
 
     draw.ellipse([(ORDER_WIDTH + 0, y - BULLET_SIZE / 2 - 1),
                   (ORDER_WIDTH + BULLET_SIZE, y + BULLET_SIZE / 2 - 1)],
