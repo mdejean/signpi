@@ -4,7 +4,7 @@ from config import *
 
 import time
 import csv
-from PIL import ImageDraw, ImageFont
+from PIL import ImageDraw, ImageFont, ImageColor
 
 LINE_HEIGHT = 16
 
@@ -26,6 +26,7 @@ def draw(img, trips):
     draw = ImageDraw.Draw(img)
 
     if len(trips) < 2 or max(t['timestamp'] for t in trips) < now - 60 * 5:
+        draw.text((0, 0), "No data", anchor='lt')
         draw.text((0,0), "No data", anchor='lt')
         #TODO: better no data screen
         return
@@ -40,14 +41,18 @@ def draw(img, trips):
         else:
             eta = f'{eta_min} min'
         if len(routes[route_id]['route_color']) == 6:
-            route_color = '#' + routes[route_id]['route_color']
+            route_color = ImageColor.getrgb('#' +
+                                            routes[route_id]['route_color'])
         else:
-            route_color = 'black'
+            route_color = ImageColor.getrgb('black')
 
         if len(routes[route_id]['route_text_color']) == 6:
-            route_text_color = '#' + routes[route_id]['route_text_color']
+            route_text_color = ImageColor.getrgb(
+                '#' + routes[route_id]['route_text_color'])
         else:
-            route_text_color = 'white'
+            route_text_color = ImageColor.getrgb(
+                'black') if sum(route_color) / 3 > 127 else ImageColor.getrgb(
+                    'white')
 
         draw_trip(draw,
                   line_heights[i],
