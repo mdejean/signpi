@@ -1,10 +1,11 @@
 [Unit]
 Description=Mount mass storage backing
-After=systemd-modules-load.service
+After=usb_gadget.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/local/bin/startup.sh
+ExecStart=/usr/local/bin/mass_storage.sh up
+ExecStop=/usr/local/bin/mass_storage.sh down
 WorkingDirectory=/usr/local/share/signpi/
  
 [Install]

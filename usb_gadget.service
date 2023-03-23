@@ -1,7 +1,6 @@
 [Unit]
-Description=USB Gadget
+Description=USB Mass Storage Gadget
 After=systemd-modules-load.service
-Wants=sign_startup.service
 Wants=check_usb_sign.timer
 Before=check_usb_sign.timer
 

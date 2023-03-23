@@ -2,7 +2,7 @@
 Description=Generate sign image
 Wants=get_data.service
 After=get_data.service
-Requires=sign_startup.service
+Requires=mass_storage.service
 # Requires a newer version of systemd
 # OnSuccess=usb_gadget.service
 Before=usb_gadget.service
