@@ -1,0 +1,12 @@
+Source: signpi                         
+Section: admin                             
+Priority: optional                         
+Maintainer: mdejean <marcel@dejean.nyc>
+Build-Depends: debhelper-compat (= 13)     
+Standards-Version: 4.5.1                   
+Rules-Requires-Root: no                    
+                                           
+Package: signpi                        
+Architecture: all                          
+Depends: ${misc:Depends}                   
+Description: Service and scripts to control an HC-01 LED matrix controller 
