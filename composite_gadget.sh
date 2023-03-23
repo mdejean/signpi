@@ -38,7 +38,7 @@ prod="USB Gadget" # adjust
 serial="t00000003" # adjust
 smac="52c565786deb"
 udc_device=""
-verbose=1
+verbose=
 m1d=""
 m1h=""
 m2d=""
@@ -87,7 +87,7 @@ g="/sys/kernel/config/usb_gadget/g"
 
 un_usb_up() {
     modprobe libcomposite
-    mount -t configfs none /sys/kernel/config
+    mountpoint -q /sys/kernel/config || mount -t configfs none /sys/kernel/config
     set -e
     usb_ver="0x0200" # USB 2.0
     dev_class="0xEF" # Composite device
