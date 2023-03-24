@@ -5,7 +5,7 @@ After=default.target
 [Service]
 Type=exec
 ExecStart=/usr/bin/signpi.sh
-WorkingDirectory=/usr/local/share/signpi/
+WorkingDirectory=/usr/share/signpi/
 
 [Install]
 WantedBy=default.target
