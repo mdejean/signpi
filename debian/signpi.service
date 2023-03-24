@@ -1,9 +1,11 @@
 [Unit]
 Description=Load config.ini, then generate sign images and send them to sign
+After=default.target
+
 [Service]
 Type=exec
 ExecStart=/usr/bin/signpi.sh
 WorkingDirectory=/usr/local/share/signpi/
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
