@@ -17,7 +17,7 @@ You will need
 * A Raspberry Pi Zero W
 * A 192 x 32 LED sign with a HC-1 controller. These can be found on ebay, aliexpress, amazon.
 
-Now, download the release zip: https://github.com/mdejean/signpi/releases/0.2
+Now, download the release zip: https://github.com/mdejean/signpi/releases/download/v0.2/signpi-0.2.zip
 
 1. Insert your microSD card into the reader and open up rpi-imager. Choose Raspberry Pi OS Lite
 
