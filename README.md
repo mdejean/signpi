@@ -1,10 +1,14 @@
 ## signpi
+![signpi](https://user-images.githubusercontent.com/4019846/227429322-2647b48b-3728-4d00-b287-a09355d859c0.jpg)
 
-A subway arrivals sign using an off-the-shelf sign and a Raspberry Pi. Powered by goodservice.io
+A subway arrivals sign using an off-the-shelf sign and a Raspberry Pi. Powered by the [goodservice.io](https://goodservice.io) API.
 
-#### Caveat
+#### The ugly part
 
 Each time the display updates, the sign will display `Load` then `ok ok`. This process takes about 3 seconds.
+
+[signpi.webm](https://user-images.githubusercontent.com/4019846/227430465-895080e9-d928-48ed-a6fd-84208461a9f9.webm)
+
 
 ### How-to
 
