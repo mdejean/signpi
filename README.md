@@ -3,7 +3,7 @@
 
 A subway arrivals sign using an off-the-shelf sign and a Raspberry Pi. Powered by the [goodservice.io](https://goodservice.io) API.
 
-#### The ugly part
+### The ugly part
 
 Each time the display updates, the sign will display `Load`, `ok ok`,
 `HC-1`, and the display resolution. This process takes about 3 seconds.
@@ -30,10 +30,11 @@ Uncheck the eject after complete option.
 3. Write the microSD card.
 
 4. Open up the 'bootfs' drive
-a. edit `cmdline.txt`: After `rootwait` add ` modules-load=dwc2`
-b. edit `config.txt`: At the bottom of the file, under `[all]` add a line with `dtoverlay=dwc2`
-c. Rename `firstrun.sh` to `firstrun2.sh`
-d. Copy `signpi.deb` and `firstrun.sh` to it.
+
+    i. edit `cmdline.txt`: After `rootwait` add ` modules-load=dwc2`  
+    ii. edit `config.txt`: At the bottom of the file, under `[all]` add a line with `dtoverlay=dwc2`  
+    iii. Rename `firstrun.sh` to `firstrun2.sh`  
+    iv. Copy `signpi.deb` and `firstrun.sh` to it.  
 
 5. Eject, put the microSD card in your Pi and plug it in to the sign.
 
