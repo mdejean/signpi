@@ -4,6 +4,7 @@ prefix=/usr
 
 mount_backing() {
     losetup -o512 /dev/loop0 /var/local/mass_storage_backing
+    mkdir -p /media/mass_storage_gadget
     mount -o sync,flush,umask=000 -t vfat /dev/loop0 /media/mass_storage_gadget
 }
 
@@ -14,7 +15,11 @@ unmount_backing() {
 
 # Reformat the backing with a new fat file system, optionally preserving the config.ini
 reformat_backing() {
-    preserve_config=$1
+    if [ -n "$1" ] ; then
+        preserve_config=$1
+    else
+        preserve_config=0
+    fi
     
     if [ -e /var/local/mass_storage_backing -a "$preserve_config" -gt 0 ] ; then
         mount_backing
@@ -46,8 +51,9 @@ if [ -e /var/local/mass_storage_backing ] ; then
     # Load user-edited config.ini
     mount_backing
 
-    # If mount went read-only due to filesystem errors, reformat and try to salvage config.ini
-    if mount -l -t vfat | grep loop0 | grep -q '[(,]ro[),]' ; then
+    # If mount failed or went read-only due to filesystem errors, reformat and try to salvage config.ini
+    if ! mount -l -t vfat | grep -q /media/mass_storage_gadget \
+        || mount -l -t vfat | grep loop0 | grep -q '[(,]ro[),]' ; then
         unmount_backing
         reformat_backing 1
         mount_backing
@@ -57,6 +63,8 @@ if [ -e /var/local/mass_storage_backing ] ; then
 else
     # Start from scratch
     reformat_backing
+    
+    shutdown -r now #ugly hack
 fi
 
 sleep 1 # wait a sec for wifi
