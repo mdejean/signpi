@@ -16,10 +16,10 @@ except:
 
 def main():
     wlan = config['wlan']
-
-    os.system(f"raspi-config nonint do_wifi_country '{wlan['country']}'")
-
-    os.system(f"raspi-config nonint do_wifi_ssid_passphrase '{wlan['ssid']}' '{wlan['psk']}'")
+    if 'country' in wlan:
+        os.system(f"raspi-config nonint do_wifi_country '{wlan['country']}'")
+    if 'ssid' in wlan and 'psk' in wlan:
+        os.system(f"raspi-config nonint do_wifi_ssid_passphrase '{wlan['ssid']}' '{wlan['psk']}'")
 
 
 if __name__ == '__main__':

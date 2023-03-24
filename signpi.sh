@@ -46,16 +46,22 @@ reformat_backing() {
     unmount_backing
 }
 
-mount_backing
-
-# If mount went read-only due to filesystem errors, reformat and try to salvage config.ini
-if mount -l -t vfat | grep loop0 | grep -q '[(,]ro[),]' ; then
-    unmount_backing
-    reformat_backing 1
+if [ -e /var/local/mass_storage_backing ] ; then
+    # Load user-edited config.ini
     mount_backing
-fi
 
-$prefix/lib/signpi/load_config.py
+    # If mount went read-only due to filesystem errors, reformat and try to salvage config.ini
+    if mount -l -t vfat | grep loop0 | grep -q '[(,]ro[),]' ; then
+        unmount_backing
+        reformat_backing 1
+        mount_backing
+    fi
+
+    $prefix/lib/signpi/load_config.py
+else
+    # Start from scratch
+    reformat_backing
+fi
 
 sleep 1 # wait a sec for wifi
 
