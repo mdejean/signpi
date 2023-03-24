@@ -24,6 +24,14 @@ pokemon = ImageFont.truetype('Pokemon X and Y.ttf', 11)
 fifteen = ImageFont.truetype('15x5.ttf', 16)
 pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
 
+def splash_screen(img):
+    draw = ImageDraw.Draw(img)
+    
+    draw.text((0, 0), text=f"signpi 0.2 mode={mode}", anchor='lt', font=pokemon)
+    draw.text((DISPLAY_WIDTH, 0), text=time.strftime('%Y-%m-%d %H:%M'), anchor='rt', font=pokemon)
+    if mode == 'subway':
+        draw.text((0, DISPLAY_HEIGHT), text=stops[station]['stop_name'], anchor='lb', font=pokemon)
+        draw.text((DISPLAY_WIDTH, DISPLAY_HEIGHT), text=direction, anchor='rb', font=pokemon)
 
 def draw(img, trips):
     # TODO: alternating pages

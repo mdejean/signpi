@@ -8,15 +8,18 @@ import layout
 
 from PIL import Image
 import json
+import sys
 
 
 def main():
-    with open('trips.json') as f:
-        trips = json.load(f)
-
     img = Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
-    layout.draw(img, trips)
+    if mode == 'subway':
+        with open('trips.json') as f:
+            trips = json.load(f)
+        layout.draw(img, trips)
+    elif mode == 'splash':
+        layout.splash_screen(img)
 
     # for debugging
     img.show()
@@ -42,4 +45,6 @@ def main():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        mode = sys.argv[1]
     main()

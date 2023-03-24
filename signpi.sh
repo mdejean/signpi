@@ -69,7 +69,7 @@ fi
 
 sleep 1 # wait a sec for wifi
 
-$prefix/lib/signpi/generate_image.py startup_splash
+$prefix/lib/signpi/generate_image.py splash
 
 unmount_backing
 
