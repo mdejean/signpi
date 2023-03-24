@@ -14,13 +14,9 @@ unmount_backing() {
 
 # Reformat the backing with a new fat file system, optionally preserving the config.ini
 reformat_backing() {
-    if [ $1 -gt 0 ] ; then
-        preserve_config=1
-    else
-        preserve_config=0
-    fi
+    preserve_config=$1
     
-    if [ -e /var/local/mass_storage_backing -a $preserve_config -eq 1 ] ; then
+    if [ -e /var/local/mass_storage_backing -a "$preserve_config" -gt 0 ] ; then
         mount_backing
         #copy config to /tmp/ if exists
         if [ -e /media/mass_storage_gadget/config.ini ] ; then
@@ -37,7 +33,7 @@ reformat_backing() {
 
     mount_backing
     
-    if [ $preserve_config -eq 1 -a -e /tmp/config.ini ] ; then
+    if [ "$preserve_config" -gt 0 -a -e /tmp/config.ini ] ; then
         cp /tmp/config.ini /media/mass_storage_gadget/
     else
         cp config.ini /media/mass_storage_gadget/
