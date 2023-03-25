@@ -1,5 +1,6 @@
-#!/usr/bin/python
-
+"""
+Subway arrival sign layout
+"""
 from config import *
 
 import time

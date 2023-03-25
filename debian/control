@@ -9,4 +9,4 @@ Rules-Requires-Root: no
 Package: signpi                        
 Architecture: all                          
 Depends: ${misc:Depends}                   
-Description: Service and scripts to control an HC-01 LED matrix controller 
+Description: Service and scripts to control an HC-01 LED matrix controller

@@ -1,6 +1,6 @@
-#!/usr/bin/python
-
 from load_config import config
+
+#TODO: refactor config stuff
 
 api_key = ''
 
