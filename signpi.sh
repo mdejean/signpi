@@ -2,6 +2,14 @@
 
 prefix=/usr
 
+mass_storage_gadget() {
+    if [ -n "$1" -a $1 = 'down' ] ; then
+        modprobe -r g_mass_storage
+    else
+        modprobe g_mass_storage file=/var/local/mass_storage_backing removable=y
+    fi
+}
+
 mount_backing() {
     losetup -o512 /dev/loop0 /var/local/mass_storage_backing
     mkdir -p /media/mass_storage_gadget
@@ -77,7 +85,7 @@ terminated=0
 trap terminated=1 TERM
 
 while [ $terminated -eq 0 ] ; do
-    composite_gadget.sh up
+    mass_storage_gadget up
     
     sleep 3 # Give some time to connect and for the sign to load
     
@@ -86,7 +94,7 @@ while [ $terminated -eq 0 ] ; do
     if [ $usb_speed = "full-speed" ] ; then
         echo "Connected to sign"
         # Disconnect the mass storage function wait so the sign loads
-        composite_gadget.sh down
+        mass_storage_gadget down
         
         # Wait to generate a new sign image
         sleep 56
