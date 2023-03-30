@@ -11,7 +11,7 @@ rsync $(cut -d ' ' -f 1 debian/install) debian/*.service $REMOTE:~/signpi/
 ssh $REMOTE /bin/bash -c '"
 set -e
 cd signpi
-gbp dch --snapshot
+gbp dch --snapshot --ignore-branch
 gbp buildpackage --git-ignore-new
 cd ..
 sudo dpkg -i signpi_*.deb
