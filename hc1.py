@@ -66,21 +66,34 @@ def pack_header(brightness):
         *list(range(0, 0x100, 0x10))
     )
 
-def pack_frames(frames, frame_times):
-    assert len(frames) == len(frame_times)
+def pack_frames(frames, frame_secs):
+    assert len(frames) == len(frame_secs)
+
+    def sec_to_frames(frames, frame_secs):
+        for frame, frame_sec in zip(frames, frame_secs):
+            while frame_sec > 200/256:
+                yield b'', 200
+                frame_sec -= 200/256
+            yield frame, round(frame_sec * 256)
+
+    n_expanded_frames = sum(1 for _ in sec_to_frames(frames, frame_secs))
     ret = struct.pack(
         page_header,
         0x0901, 0x0A10,
         0x0600, 0xC000,
         0x2001,
-        len(frames),
+        n_expanded_frames,
         0,
         0x14)
-    start = struct.calcsize(page_header) + len(frames) * struct.calcsize(frame_header)
-    for frame, frame_time in zip(frames, frame_times):
+    start = struct.calcsize(page_header) + n_expanded_frames * struct.calcsize(frame_header)
+    for frame, frame_time in sec_to_frames(frames, frame_secs):
+        long_frame = False
+        if frame_time > 200:
+            frame_time = frame_time / 10
+            long_frame = True
         ret += struct.pack(
             frame_header,
-            frame_time, False,
+            frame_time, long_frame,
             start,
             0,
             0

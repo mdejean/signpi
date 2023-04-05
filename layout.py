@@ -35,9 +35,9 @@ def splash_screen():
     img = new_frame()
     draw = ImageDraw.Draw(img)
     
-    draw.text((0, 0), text=f"signpi 0.2 mode={mode}", anchor='lt', font=pokemon)
+    draw.text((0, 0), text=f"signpi 0.2 mode={config.mode}", anchor='lt', font=pokemon)
     draw.text((DISPLAY_WIDTH, 0), text=time.strftime('%Y-%m-%d %H:%M'), anchor='rt', font=pokemon)
-    if mode == 'subway':
+    if config.mode == 'subway':
         draw.text((0, DISPLAY_HEIGHT), text=stops[config.subway.get('station')]['stop_name'], anchor='lb', font=pokemon)
         draw.text((DISPLAY_WIDTH, DISPLAY_HEIGHT), text=config.subway.get('direction'), anchor='rb', font=pokemon)
 
@@ -96,7 +96,7 @@ def subway():
                     dest_short='x',
                     eta=eta)
         frames.append(img)
-        frame_times.append(100)
+        frame_times.append(10)
     return frames, frame_times
 
 def draw_trip(draw,
