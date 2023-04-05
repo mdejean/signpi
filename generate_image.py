@@ -9,7 +9,6 @@ import hc1
 
 
 from PIL import Image
-import json
 import sys
 
 transpose_base = Image.Transpose if hasattr(
@@ -23,20 +22,14 @@ def image_to_6bpp(img):
     ])
 
 def main():
-    img = Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT))
-
     if mode == 'subway':
-        with open('trips.json') as f:
-            trips = json.load(f)
-        layout.draw(img, trips)
+        frames, frame_times = layout.subway()
     elif mode == 'splash':
-        layout.splash_screen(img)
-
-    frames = [img]
-    frame_times = [1]
+        frames, frame_times = layout.splash_screen()
 
     # for debugging
-    img.show()
+    for f in frames:
+        f.show()
 
     with open(target, 'wb') as f:
         f.write(hc1.generate_prg(

@@ -1,13 +1,16 @@
 """
 Subway arrival sign layout
 """
-from config import *
+import config
 
 import time
 import csv
-from PIL import ImageDraw, ImageFont, ImageColor
+import json
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 
 LINE_HEIGHT = 16
+DISPLAY_HEIGHT = config.DISPLAY_HEIGHT
+DISPLAY_WIDTH = config.DISPLAY_WIDTH
 
 line_heights = [LINE_HEIGHT / 2, DISPLAY_HEIGHT - LINE_HEIGHT / 2 + 1]
 
@@ -25,65 +28,76 @@ pokemon = ImageFont.truetype('Pokemon X and Y.ttf', 11)
 fifteen = ImageFont.truetype('15x5.ttf', 16)
 pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
 
-def splash_screen(img):
+def new_frame():
+    return Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+
+def splash_screen():
+    img = new_frame()
     draw = ImageDraw.Draw(img)
     
     draw.text((0, 0), text=f"signpi 0.2 mode={mode}", anchor='lt', font=pokemon)
     draw.text((DISPLAY_WIDTH, 0), text=time.strftime('%Y-%m-%d %H:%M'), anchor='rt', font=pokemon)
     if mode == 'subway':
-        draw.text((0, DISPLAY_HEIGHT), text=stops[station]['stop_name'], anchor='lb', font=pokemon)
-        draw.text((DISPLAY_WIDTH, DISPLAY_HEIGHT), text=direction, anchor='rb', font=pokemon)
+        draw.text((0, DISPLAY_HEIGHT), text=stops[config.subway.get('station')]['stop_name'], anchor='lb', font=pokemon)
+        draw.text((DISPLAY_WIDTH, DISPLAY_HEIGHT), text=config.subway.get('direction'), anchor='rb', font=pokemon)
 
-def draw(img, trips):
+    return [img], [1]
+
+def subway():
     # TODO: alternating pages
+    with open('trips.json') as f:
+        trips = json.load(f)
 
     now = time.time()
-    draw = ImageDraw.Draw(img)
 
     if len(trips) < 2 or max(t['timestamp'] for t in trips) < now - 60 * 5:
+        img = new_frame()
+        draw = ImageDraw.Draw(img)
         draw.text((0, 0), "No data", anchor='lt')
         #TODO: better no data screen
-        return
-    for i in (0, 1):
-        route = routes[trips[i]['route_id']]
-        stop_id = trips[i]['destination_stop']
+        return [img], 1
 
-        eta_min = round(
-            (trips[i]['estimated_current_stop_arrival_time'] - now) / 60)
-        if eta_min > 99 or trips[i]['is_delayed']:
-            eta = 'Delay'
-        else:
-            eta = f'{eta_min} min'
-        if len(route['route_color']) == 6:
-            route_color = ImageColor.getrgb(f"#{route['route_color']}")
-        else:
-            route_color = ImageColor.getrgb('black')
+    frames = []
+    frame_times = []
+    for page in range(min(config.subway.getint('pages', 2), len(trips) // 2)):
+        img = new_frame()
+        draw = ImageDraw.Draw(img)
+        for i in range(page * 2, (page + 1) * 2):
+            route = routes[trips[i]['route_id']]
+            stop_id = trips[i]['destination_stop']
 
-        if len(route['route_text_color']) == 6:
-            route_text_color = ImageColor.getrgb(
-                f"#{route['route_text_color']}")
-        else:
-            if sum(route_color) / 3 > 127:
-                route_text_color = ImageColor.getrgb('black')
+            eta_min = round(
+                (trips[i]['estimated_current_stop_arrival_time'] - now) / 60)
+            if eta_min > 99 or trips[i]['is_delayed']:
+                eta = 'Delay'
             else:
-                route_text_color = ImageColor.getrgb('white')
+                eta = f'{eta_min} min'
+            if len(route['route_color']) == 6:
+                route_color = ImageColor.getrgb(f"#{route['route_color']}")
+            else:
+                route_color = ImageColor.getrgb('black')
 
-        draw_trip(draw,
-                  line_heights[i],
-                  order=f'{i+1}.',
-                  route=route['route_short_name'],
-                  route_color=route_color,
-                  route_text_color=route_text_color,
-                  dest=stops[stop_id]['stop_name'],
-                  dest_short='x',
-                  eta=eta)
+            if len(route['route_text_color']) == 6:
+                route_text_color = ImageColor.getrgb(
+                    f"#{route['route_text_color']}")
+            else:
+                if sum(route_color) / 3 > 127:
+                    route_text_color = ImageColor.getrgb('black')
+                else:
+                    route_text_color = ImageColor.getrgb('white')
 
-    # draw.text((192, 0),
-    #           "10:47 PM",
-    #           font=mania,
-    #           anchor='rt',
-    #           fill=(255, 255, 255))
-
+            draw_trip(draw,
+                    line_heights[i % len(line_heights)],
+                    order=f'{i+1}.',
+                    route=route['route_short_name'],
+                    route_color=route_color,
+                    route_text_color=route_text_color,
+                    dest=stops[stop_id]['stop_name'],
+                    dest_short='x',
+                    eta=eta)
+        frames.append(img)
+        frame_times.append(100)
+    return frames, frame_times
 
 def draw_trip(draw,
               y,

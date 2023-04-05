@@ -6,15 +6,15 @@ api_key = ''
 
 sign = config['sign']
 
+subway = config['subway']
+
+wlan = config['wlan']
+
 mode = sign['mode'] or 'clock'
 
-flip = sign.getboolean('flip', False)
+direction = subway['direction'] or 'north'
 
-station = sign['station'] or '234'
-
-direction = sign['direction'] or 'north'
-
-goodservice_url = 'https://www.goodservice.io/api/stops/' + station
+goodservice_url = 'https://www.goodservice.io/api/stops/' + subway.get('station')
 
 target = '/media/mass_storage_gadget/COLOR_01.PRG'
 

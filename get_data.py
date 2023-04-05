@@ -4,17 +4,18 @@ import requests
 import json
 import pickle
 import sys
-from config import *
 
-headers = {'x-application': 'signpi', 'x-api-key': api_key}
+import config
+
+headers = {'x-application': 'signpi', 'x-api-key': config.api_key}
 try:
-    with requests.get(goodservice_url) as req:
+    with requests.get(config.goodservice_url) as req:
         body = req.json()
 
         #    now = body['timestamp']
 
         # TODO: both directions, filter routes
-        trips = body['upcoming_trips'][direction]
+        trips = body['upcoming_trips'][config.subway.get('direction', 'north')]
 
         #    for n in range(min(4, len(trips))):
         #        t = trips[n]
