@@ -7,11 +7,16 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read('config.ini')
-try:
-    config.read('/media/mass_storage_gadget/config.ini')
-except:
-    pass
+config_locations = [
+    'config.ini',
+    '/etc/signpi/config.ini',
+    '/media/mass_storage_gadget/config.ini'
+]
+for f in config_locations:
+    try:
+        config.read(f)
+    except:
+        pass
 
 
 def main():
