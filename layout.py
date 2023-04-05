@@ -35,7 +35,7 @@ def splash_screen():
     img = new_frame()
     draw = ImageDraw.Draw(img)
     
-    draw.text((0, 0), text=f"signpi 0.2 mode={config.mode}", anchor='lt', font=pokemon)
+    draw.text((0, 0), text=f"signpi 0.3 mode={config.mode}", anchor='lt', font=pokemon)
     draw.text((DISPLAY_WIDTH, 0), text=time.strftime('%Y-%m-%d %H:%M'), anchor='rt', font=pokemon)
     if config.mode == 'subway':
         draw.text((0, DISPLAY_HEIGHT), text=stops[config.subway.get('station')]['stop_name'], anchor='lb', font=pokemon)
