@@ -7,6 +7,23 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
+config.read_string("""
+[wlan]
+#country=US
+#ssid=abc
+#psk=xyz
+
+[sign]
+flip=false
+mode=subway
+brightness=0
+
+[subway]
+pages=4
+direction=north
+station=123
+""")
+
 config_locations = [
     'config.ini',
     '/etc/signpi/config.ini',

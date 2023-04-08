@@ -71,10 +71,11 @@ def pack_frames(frames, frame_secs):
 
     def sec_to_frames(frames, frame_secs):
         for frame, frame_sec in zip(frames, frame_secs):
-            while frame_sec > 200/256:
-                yield b'', 200
-                frame_sec -= 200/256
-            yield frame, round(frame_sec * 256)
+            frame_time = frame_sec / 0.005
+            while frame_time > 2550:
+                yield b'', 2550
+                frame_time -= 2550
+            yield frame, round(frame_time)
 
     n_expanded_frames = sum(1 for _ in sec_to_frames(frames, frame_secs))
     ret = struct.pack(
@@ -89,7 +90,7 @@ def pack_frames(frames, frame_secs):
     for frame, frame_time in sec_to_frames(frames, frame_secs):
         long_frame = False
         if frame_time > 200:
-            frame_time = frame_time / 10
+            frame_time = frame_time // 10
             long_frame = True
         ret += struct.pack(
             frame_header,
