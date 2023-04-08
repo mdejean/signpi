@@ -24,7 +24,7 @@ try:
         #        print(f"{n}. {t['route_id']} {t['destination_stop']} {eta_min} min")
 
         with open('trips.json', 'w') as f:
-            json.dump(trips[:min(4, len(trips))], f)
+            json.dump(trips[:min(config.subway.getint('pages', 4), len(trips))], f)
 except ConnectionError:
     with open('trips.json') as f:
         json.dump([], f)
