@@ -6,6 +6,7 @@ import config
 import time
 import csv
 import json
+import math
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 
 LINE_HEIGHT = 16
@@ -27,6 +28,8 @@ mania = ImageFont.truetype('mania.ttf', 14)
 pokemon = ImageFont.truetype('Pokemon X and Y.ttf', 11)
 fifteen = ImageFont.truetype('15x5.ttf', 16)
 pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
+hv = ImageFont.truetype('DejaVuSans-Bold.ttf', 126)
+#gem = ImageFont.load('gem.pil')
 
 def new_frame():
     return Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT))
@@ -44,7 +47,6 @@ def splash_screen():
     return [img], [1]
 
 def subway():
-    # TODO: alternating pages
     with open('trips.json') as f:
         trips = json.load(f)
 
@@ -61,9 +63,7 @@ def subway():
     frame_times = []
     for page in range(min(config.subway.getint('pages', 2), len(trips) // 2)):
         img = new_frame()
-        draw = ImageDraw.Draw(img)
         for i in range(page * 2, (page + 1) * 2):
-            route = routes[trips[i]['route_id']]
             stop_id = trips[i]['destination_stop']
 
             eta_min = round(
@@ -72,26 +72,11 @@ def subway():
                 eta = 'Delay'
             else:
                 eta = f'{eta_min} min'
-            if len(route['route_color']) == 6:
-                route_color = ImageColor.getrgb(f"#{route['route_color']}")
-            else:
-                route_color = ImageColor.getrgb('black')
 
-            if len(route['route_text_color']) == 6:
-                route_text_color = ImageColor.getrgb(
-                    f"#{route['route_text_color']}")
-            else:
-                if sum(route_color) / 3 > 127:
-                    route_text_color = ImageColor.getrgb('black')
-                else:
-                    route_text_color = ImageColor.getrgb('white')
-
-            draw_trip(draw,
+            draw_trip(img,
                     line_heights[i % len(line_heights)],
                     order=f'{i+1}.',
-                    route=route['route_short_name'],
-                    route_color=route_color,
-                    route_text_color=route_text_color,
+                    route=trips[i]['route_id'],
                     dest=stops[stop_id]['stop_name'],
                     dest_short='x',
                     eta=eta)
@@ -99,23 +84,23 @@ def subway():
         frame_times.append(10)
     return frames, frame_times
 
-def draw_trip(draw,
+def draw_trip(img,
               y,
               order,
               route,
-              route_color,
-              route_text_color,
               dest,
               dest_short,
               eta,
               eta_fill=(255, 255, 255)):
 
     order_font = fifteen
-    bullet_font = pm
     main_font = pokemon
 
     BULLET_SIZE = 14
     ORDER_WIDTH = 8
+
+    draw = ImageDraw.Draw(img)
+    draw.fontmode = '1' # no antialiasing
 
     draw.text((0, y),
               order,
@@ -123,23 +108,14 @@ def draw_trip(draw,
               anchor='lm',
               fill=(255, 255, 255))
 
-    draw.ellipse([(ORDER_WIDTH + 0, y - BULLET_SIZE / 2 - 1),
-                  (ORDER_WIDTH + BULLET_SIZE, y + BULLET_SIZE / 2 - 1)],
-                 fill=route_color,
-                 width=2)
-    draw.text((ORDER_WIDTH + BULLET_SIZE / 2 + 1, y - 1),
-              text=route,
-              font=bullet_font,
-              anchor='mm',
-              fill=route_text_color)
-
+    draw_bullet(img, route, (ORDER_WIDTH + BULLET_SIZE - BULLET_SIZE // 2, y-1), BULLET_SIZE)
     dest_x = ORDER_WIDTH + BULLET_SIZE + 4
     available_space = DISPLAY_WIDTH - dest_x - max(
         main_font.getlength('Delay'), main_font.getlength('99 min'))
 
     draw.text((dest_x, y),
-              text=dest_short
-              if main_font.getlength(dest) > available_space else dest,
+              text=dest
+              if main_font.getlength(dest) < available_space else dest_short,
               font=main_font,
               anchor='lm',
               fill=(255, 255, 255))
@@ -149,3 +125,44 @@ def draw_trip(draw,
               anchor="rm",
               font=main_font,
               fill=eta_fill)
+
+def draw_bullet(img, route_id, center, diameter):
+    draw = ImageDraw.Draw(img)
+    bullet_font = pm #gem
+    x, y = center
+
+    route = routes[route_id]
+    if len(route['route_color']) == 6:
+        route_color = ImageColor.getrgb(f"#{route['route_color']}")
+    else:
+        route_color = ImageColor.getrgb('black')
+
+    if len(route['route_text_color']) == 6:
+        route_text_color = ImageColor.getrgb(
+            f"#{route['route_text_color']}")
+    else:
+        if sum(route_color) / 3 > 144:
+            route_text_color = ImageColor.getrgb('black')
+        else:
+            route_text_color = ImageColor.getrgb('white')
+
+    bounds = [[x - math.floor(diameter / 2), x + math.ceil(diameter / 2)],
+              [y - math.floor(diameter / 2), y + math.ceil(diameter / 2)]]
+
+    if route_id in ('FX', '5X', '6X', '7X'):
+        # draw diamond
+        route_text = route_id[:1]
+        draw.polygon([
+            (bounds[0][0]-1, y),
+            (x, bounds[1][0]-1 ),
+            (bounds[0][1]+1, y),
+            (x, bounds[1][1]+1)],
+        fill=route_color)
+    else:
+        route_text = route['route_short_name']
+        draw.ellipse([(bounds[0][0], bounds[1][0]),
+                    (bounds[0][1], bounds[1][1])],
+                    fill=route_color)
+
+    #draw.text((x-3, y-6), route_text, font=gem, anchor='mm', fill=route_text_color)
+    draw.text((x+1, y), route_text, font=bullet_font, anchor='mm', fill=route_text_color)
