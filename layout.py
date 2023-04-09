@@ -24,12 +24,9 @@ with open('routes.txt', 'r') as f:
 with open('stops.txt', 'r') as f:
     stops = {s['stop_id']: s for s in csv.DictReader(f)}
 
-mania = ImageFont.truetype('mania.ttf', 14)
 pokemon = ImageFont.truetype('Pokemon X and Y.ttf', 11)
 fifteen = ImageFont.truetype('15x5.ttf', 16)
 pm = ImageFont.truetype('pixelmix_bold.ttf', 8)
-hv = ImageFont.truetype('DejaVuSans-Bold.ttf', 126)
-#gem = ImageFont.load('gem.pil')
 
 def new_frame():
     return Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT))
@@ -128,20 +125,24 @@ def draw_trip(img,
 
 def draw_bullet(img, route_id, center, diameter):
     draw = ImageDraw.Draw(img)
-    bullet_font = pm #gem
+    draw.fontmode = '1'
+    bullet_font = pm
     x, y = center
 
     route = routes[route_id]
     if len(route['route_color']) == 6:
         route_color = ImageColor.getrgb(f"#{route['route_color']}")
     else:
-        route_color = ImageColor.getrgb('black')
+        if route_id in ('GS', 'FS', 'H'):
+            route_color = ImageColor.getrgb('#6D6E71')
+        else:
+            route_color = ImageColor.getrgb('black')
 
     if len(route['route_text_color']) == 6:
         route_text_color = ImageColor.getrgb(
             f"#{route['route_text_color']}")
     else:
-        if sum(route_color) / 3 > 144:
+        if route_id in ('N', 'Q', 'R', 'W'):
             route_text_color = ImageColor.getrgb('black')
         else:
             route_text_color = ImageColor.getrgb('white')
@@ -164,5 +165,10 @@ def draw_bullet(img, route_id, center, diameter):
                     (bounds[0][1], bounds[1][1])],
                     fill=route_color)
 
-    #draw.text((x-3, y-6), route_text, font=gem, anchor='mm', fill=route_text_color)
-    draw.text((x+1, y), route_text, font=bullet_font, anchor='mm', fill=route_text_color)
+    draw.text(
+        (x+1, y),
+        route_text,
+        font=bullet_font,
+        anchor='mm',
+        fill=route_text_color
+    )
