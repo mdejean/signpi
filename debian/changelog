@@ -1,0 +1,19 @@
+signpi (0.3) unstable; urgency=medium
+
+  * give up on composite gadget, use g_mass_storage
+  * partially reverse engineer prg file format and add multiple frames
+  * add a config.ini location in /etc/
+  * draw diamonds
+  * stop trying to have rules and just make the NQRW black text
+
+ -- Marcel Dejean <marcel@dejean.nyc>  Thu, 13 Apr 2023 19:30:53 -0400
+
+signpi (0.2) unstable; urgency=medium
+
+  * initial release
+  * give up on systemd
+
+signpi (0.1) unstable; urgency=medium
+
+  * what you might have seen at NYCSoDa
+  * attempt to systemd
