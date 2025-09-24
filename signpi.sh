@@ -81,6 +81,8 @@ $prefix/lib/signpi/generate_image.py splash
 
 unmount_backing
 
+last_data=0
+last_data_length=0
 terminated=0
 trap terminated=1 TERM
 
@@ -93,16 +95,26 @@ while [ $terminated -eq 0 ] ; do
     
     if [ $usb_speed = "full-speed" ] ; then
         echo "Connected to sign"
-        # Disconnect the mass storage function wait so the sign loads
+        # Disconnect the mass storage function, wait so the sign loads
         mass_storage_gadget down
         
-        # Wait to generate a new sign image
-        sleep 56
+        # if get_data returns error (1), retry until it is successful
+        while [ $terminated -eq 0 ] ; do
+            # get_data might wait a fixed period instead of returning 1
+            data="$($prefix/lib/signpi/get_data.py -d $last_data -l $last_data_length)"
+            return_value=$?
+            if [ $return_value -eq 0 ] ; then
+                last_data=$(date +%s)
+                last_data_length="${#data}"
+                break
+            else
+                sleep 3 # don't hammer api too much
+            fi
+        done
         
         mount_backing
         
-        $prefix/lib/signpi/get_data.py
-        $prefix/lib/signpi/generate_image.py
+        echo "$data" | $prefix/lib/signpi/generate_image.py
         
         unmount_backing
     elif [ $usb_speed = "high-speed" ] ; then

@@ -7,7 +7,8 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read_string("""
+config.read_string(
+    """
 [wlan]
 #country=US
 #ssid=abc
@@ -17,17 +18,38 @@ config.read_string("""
 flip=false
 mode=subway
 brightness=0
+display_height=32
+display_width=192
 
 [subway]
+api_key=
 pages=4
 direction=north
 station=123
-""")
+
+[adsb]
+api_key=
+lat=0
+lon=0
+radius=1
+max_altitude=99999
+route_api=flightaware
+
+[boating]
+api_key=
+weather_station=KNYC
+zone=ANZ338
+buoy=ROBN4
+tide_station=8518750
+current_station=NYH1927
+current_bin=13
+"""
+)
 
 config_locations = [
-    'config.ini',
-    '/etc/signpi/config.ini',
-    '/media/mass_storage_gadget/config.ini'
+    "config.ini",
+    "/etc/signpi/config.ini",
+    "/media/mass_storage_gadget/config.ini",
 ]
 for f in config_locations:
     try:
@@ -37,12 +59,14 @@ for f in config_locations:
 
 
 def main():
-    wlan = config['wlan']
-    if 'country' in wlan:
+    wlan = config["wlan"]
+    if "country" in wlan:
         os.system(f"raspi-config nonint do_wifi_country '{wlan['country']}'")
-    if 'ssid' in wlan and 'psk' in wlan:
-        os.system(f"raspi-config nonint do_wifi_ssid_passphrase '{wlan['ssid']}' '{wlan['psk']}'")
+    if "ssid" in wlan and "psk" in wlan:
+        os.system(
+            f"raspi-config nonint do_wifi_ssid_passphrase '{wlan['ssid']}' '{wlan['psk']}'"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

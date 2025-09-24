@@ -1,7 +1,6 @@
 signpi.sh usr/bin
-*.ttf usr/share/signpi
+fonts usr/share/signpi
+icons usr/share/signpi
+data usr/share/signpi
 *.py usr/lib/signpi
 config.ini usr/share/signpi
-template.bin usr/share/signpi
-stops.txt usr/share/signpi
-routes.txt usr/share/signpi

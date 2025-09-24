@@ -2,30 +2,45 @@
 
 import requests
 import json
-import pickle
 import sys
+import argparse
 
-import config
+from load_config import config
+import subway
+import boating
+import adsb
 
-headers = {'x-application': 'signpi', 'x-api-key': config.api_key}
-try:
-    with requests.get(config.goodservice_url) as req:
-        body = req.json()
 
-        #    now = body['timestamp']
+def get_data(mode="splash", last_timestamp=0, last_data_length=0):
+    retry = False
+    if mode == "subway":
+        retry = subway.get_data(last_timestamp)
+    elif mode == "boating":
+        retry = boating.get_data(last_timestamp)
+    elif mode == "adsb":
+        retry = adsb.get_data(last_timestamp, last_data_length)
+    elif mode == "splash":
+        pass
 
-        # TODO: both directions, filter routes
-        trips = body['upcoming_trips'][config.subway.get('direction', 'north')]
+    sys.exit(1 if retry else 0)
 
-        #    for n in range(min(4, len(trips))):
-        #        t = trips[n]
-        #        eta_min = round((t['estimated_current_stop_arrival_time'] - now) / 60)
 
-        #        print(f"{n}. {t['route_id']} {t['destination_stop']} {eta_min} min")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Get sign data to stdout")
+    parser.add_argument(
+        "--date",
+        "-d",
+        default=0,
+        type=int,
+        help="Last timestamp that data was successfully retrieved",
+    )
+    parser.add_argument(
+        "--length", "-l", default=0, type=int, help="Length of the previous data"
+    )
+    parser.add_argument(
+        "mode", default=config["sign"]["mode"], nargs="?", help="Mode to run in"
+    )
 
-        with open('trips.json', 'w') as f:
-            json.dump(trips[:min(config.subway.getint('pages', 4), len(trips))], f)
-except ConnectionError:
-    with open('trips.json') as f:
-        json.dump([], f)
-    sys.exit(1)
+    args = parser.parse_args()
+
+    get_data(mode=args.mode, last_timestamp=args.date, last_data_length=args.length)
