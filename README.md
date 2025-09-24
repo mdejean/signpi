@@ -19,7 +19,7 @@ but should be more widely available soon.
 * A 192 x 32 LED sign with a HC-1 controller.
 These can be found on ebay, aliexpress, amazon.
 
-Now, download the release zip: https://github.com/mdejean/signpi/releases/download/v0.2/signpi-0.2.zip
+Now, download the release zip: https://github.com/mdejean/signpi/releases/download/v0.4/signpi-0.4.zip
 
 1. Insert your microSD card into the reader and open up rpi-imager.
 Choose Raspberry Pi OS Lite
@@ -56,8 +56,21 @@ Nevins Street is `https://goodservice.io/stations/234` so the code is `234`
 These displays allow the user to program the sign using some software
 which puts a file (`COLOR_01.PRG`) on a flash drive which is then plugged
 in to the sign. signpi makes the Raspberry Pi Zero W pretend to be a
-flash drive containing that file, and 'unplugs' itself once a minute to get
+flash drive containing that file, and 'unplugs' itself to get
 the sign to display the image it has created.
+
+### ADSB mode ^(new!)
+
+[adsb.mov](https://github.com/user-attachments/assets/3b30e8f3-b036-454e-9836-f69fb1c8616b)
+
+Displays the nearest aircraft to a location.
+
+For aircraft location this repeatedly calls the [adsb.lol API](https://api.adsb.lol/docs) which is free.
+For route information this uses the flightaware API which is not free - it
+costs $0.005 per request, with up to $5/mo free. signpi tries to make only one
+request per plane, but in busy areas this still adds up quickly. You must
+create an account and put the api key in config.ini to use the flightaware api.
+
 
 ### License
 
