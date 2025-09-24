@@ -245,7 +245,7 @@ def get_layout():
                 fill=(
                     (0, 192, 0)
                     if delay <= 0
-                    else (127, 127, 0) if delay <= 300 else (192, 0, 0)
+                    else (128, 128, 0) if delay <= 300 else (192, 0, 0)
                 ),
             )
             draw.text(
@@ -285,7 +285,7 @@ def get_layout():
             "Op. by " + operators.get(data["operator"]),
             anchor="rt",
             font=layout.font0403,
-            fill=(127, 127, 127),
+            fill=(128, 128, 128),
         )
 
     draw.text(

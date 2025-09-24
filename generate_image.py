@@ -25,7 +25,9 @@ def image_to_6bpp(img):
     img = img.transpose(transpose_base.TRANSPOSE)
     return bytes(
         [
-            (pixel[0] >> 6) | ((pixel[1] >> 6) << 2) | ((pixel[2] >> 6) << 4)
+            ((pixel[0] + 32) >> 6)
+            | (((pixel[1] + 32) >> 6) << 2)
+            | (((pixel[2] + 32) >> 6) << 4)
             for pixel in img.getdata()
         ]
     )
