@@ -58,9 +58,9 @@ def flightaware_cache(registration):
 
             for r in all_flights:
                 if (
-                    r.get("estimated_out", r.get("estimated_off"))
+                    r.get("estimated_out", r.get("estimated_off",""))
                     < datetime.utcnow().isoformat()
-                    and r.get("estimated_in", r.get("estimated_on"))
+                    and r.get("estimated_in", r.get("estimated_on",""))
                     > datetime.utcnow().isoformat()
                 ):
                     return r

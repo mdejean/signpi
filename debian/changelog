@@ -19,7 +19,11 @@ signpi (0.2) unstable; urgency=medium
   * initial release
   * give up on systemd
 
+ -- Marcel Dejean <marcel@dejean.nyc>  Thu, 24 Mar 2023 00:00:00 -0500
+
 signpi (0.1) unstable; urgency=medium
 
   * what you might have seen at NYCSoDa
   * attempt to systemd
+
+ -- Marcel Dejean <marcel@dejean.nyc>  Thu, 19 Feb 2023 00:00:00 -0500
