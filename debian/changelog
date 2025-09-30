@@ -1,3 +1,15 @@
+signpi (0.5) unstable; urgency=medium
+
+  * Add transit.land support to mode=subway (now a misnomer!).
+  * One character routes use bullets, others (most buses) use boxes.
+  * Add support for multiple stops, multiple directions, and route filter.
+  * Strip out lots of unknowns from the binary, seems to still work
+  * Gray out trips without real time data (is_assigned = false or no estimated)
+  * Allow odd numbers of trips
+  * Much refactoring
+
+ -- Marcel Dejean <marcel@dejean.nyc>  Sat, 06 Dec 2025 19:42:46 -0500
+
 signpi (0.4) unstable; urgency=medium
 
   * New mode for showing flights overhead

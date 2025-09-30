@@ -37,13 +37,13 @@ def splash_screen():
 
     draw.text(
         (0, 0),
-        text=f"signpi 0.4 mode={config['sign']['mode']}",
+        text=f"signpi 0.5 mode={config['sign']['mode']}",
         anchor="lt",
         font=pokemon,
     )
     draw.text(
         (DISPLAY_WIDTH, 0),
-        text=time.strftime("%Y-%m-%d %H:%M"),
+        text=time.strftime("%Y-%m-%d %H:%M %z"),
         anchor="rt",
         font=pokemon,
     )

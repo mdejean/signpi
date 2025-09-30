@@ -5,10 +5,14 @@ When run, update the wifi configuration from config.ini, otherwise provide the
 """
 import configparser
 import os
+import logging
 
 config = configparser.ConfigParser()
 config.read_string(
     """
+[logging]
+log_level=INFO
+
 [wlan]
 #country=US
 #ssid=abc
@@ -23,9 +27,10 @@ display_width=192
 
 [subway]
 api_key=
-pages=4
-direction=north
-station=123
+pages=
+direction=south,north,0,1
+route=
+station=123,s-dr5rurx7ss-w72st~broadway
 
 [adsb]
 api_key=
@@ -57,6 +62,7 @@ for f in config_locations:
     except:
         pass
 
+logging.basicConfig(level=getattr(logging, config["logging"]["log_level"], None))
 
 def main():
     wlan = config["wlan"]

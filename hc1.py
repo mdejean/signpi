@@ -8,25 +8,25 @@ import struct
 
 header = (
     ">12s"  # COLOR_01.PRG
-    + "4B"  # Unknown, changes
+    + "I"  # Unknown, changes
     # +0x10
-    + "4B"  # Unknown, static 0x61
-    + "2x2B"  # 0x3864 or 0x3094?
-    + "B3x"  # 0x51
+    + "2H"  # 0x27 0x0D (unk) 0x61 (static) 0x00
+    + "2xH"  # 0x3864 or 0x3094?
+    + "B3x"  # 0x51 (mandatory)
     + "I"  # 0
     # +0x20
     + "xHx"  # 0x1800 (number of pixels, 192*32), 0
-    + "4H"  # c020 1000 c002 0000 - relates to display configuration?
+    + "2BH2BH"  # c020 1000 c002 0000 - relates to display configuration?
     + "3xB"  # Display brightness: 0 = maximum, 4 = minimum
     # +0x30
-    + "16B"  # 0-15
+    + "16B"  # 0-15 but seems to not matter?
     # +0x40
-    + "I"  # 0x00101010
+    + "4B"  # 0x00101010 - some sort of timing settings?
     + "428x"  # 0
     # +0x1F0
     + "16B"  # 00 00 00 10 10 01 01 00 00 00 00 00 00 01 0A 00
     # +0x200
-    + "16H"  # 0x0000 0x0010 .. 0x00F0
+    + "16H"  # 0x0000 0x0010 .. 0x00F0 - some sort of offset
     # +0x220
     + "1504x"  # 0
     # +0x800
@@ -51,36 +51,24 @@ frame_header = (
 )
 
 
-def pack_header(brightness):
+def pack_header(brightness, display_width, display_height):
     return struct.pack(
         header,
         b"COLOR_01.PRG",
-        0x17,
-        0x03,
-        0x18,
-        0x0C,
-        0x27,
-        0x0D,
-        0x00,
-        0x61,
-        0x38,
-        0x64,
+        0,
+        0,
+        0,
+        0,
         0x51,
         0,
-        0x1800,
-        0xC020,
+        display_width * display_height,
+        display_width, display_height, # this should support displays larger than 255x255 but not sure how.
         0x1000,
-        0xC002,
+        display_width, int(display_height // 0x10),
         0x0000,
         brightness,
-        *list(range(16)),
-        0x101010,
-        0x00,
-        0x00,
-        0x00,
-        0x10,
-        0x10,
-        0x01,
+        *list([0]*16),
+        0x00, 0x10, 0x10, 0x10,
         0x00,
         0x00,
         0x00,
@@ -88,10 +76,16 @@ def pack_header(brightness):
         0x00,
         0x00,
         0x00,
-        0x01,
-        0x0A,
         0x00,
-        *list(range(0, 0x100, 0x10))
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        *list(range(0, 0x100, 0x10)),
     )
 
 
@@ -125,5 +119,5 @@ def pack_frames(frames, frame_secs):
     return ret
 
 
-def generate_prg(brightness, frames, frame_times):
-    return pack_header(brightness) * 2 + pack_frames(frames, frame_times)
+def generate_prg(brightness, frames, frame_times, display_width, display_height):
+    return pack_header(brightness, display_width, display_height) * 2 + pack_frames(frames, frame_times)

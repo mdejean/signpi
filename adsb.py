@@ -2,6 +2,7 @@
 
 from load_config import config
 import layout
+
 import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -9,16 +10,15 @@ import json
 import os
 import sys
 import csv
-from PIL import Image, ImageDraw, ImageFont, ImageColor
+import logging
 
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 import requests
 
-LINE_HEIGHT = 16
+logger = logging.getLogger(__name__)
+
 DISPLAY_HEIGHT = int(config["sign"]["display_height"])
 DISPLAY_WIDTH = int(config["sign"]["display_width"])
-
-line_heights = [LINE_HEIGHT / 2, DISPLAY_HEIGHT - LINE_HEIGHT / 2 + 1]
-
 
 def flightaware_cache(registration):
     assert "/" not in registration
@@ -33,13 +33,15 @@ def flightaware_cache(registration):
                 r
                 for r in all_flights
                 if (
-                    r.get("estimated_out", r.get("estimated_off"))
+                    (r.get("estimated_out") or r.get("estimated_off") or "")
                     < datetime.utcnow().isoformat()
-                    and r.get("estimated_in", r.get("estimated_on"))
+                    and (r.get("estimated_in") or r.get("estimated_on") or "9999")
                     > datetime.utcnow().isoformat()
                 )
             )  # throws StopIteration if nothing matches
     except:
+        logger.info(f"fetching flight info for registration {registration}")
+
         start_date = datetime.utcnow() - timedelta(hours=10)
         end_date = datetime.utcnow() + timedelta(hours=10)
         with requests.get(
@@ -58,9 +60,9 @@ def flightaware_cache(registration):
 
             for r in all_flights:
                 if (
-                    r.get("estimated_out", r.get("estimated_off",""))
+                    (r.get("estimated_out") or r.get("estimated_off") or "")
                     < datetime.utcnow().isoformat()
-                    and r.get("estimated_in", r.get("estimated_on",""))
+                    and (r.get("estimated_in") or r.get("estimated_on") or "")
                     > datetime.utcnow().isoformat()
                 ):
                     return r
@@ -94,7 +96,7 @@ def get_data(last_timestamp, prev_data_length):
 
             route_data = {
                 "flight_no": flight_no,
-                "codeshares": response["codeshares"],
+                "codeshares": response.get("codeshares"),
                 "operator": response["operator"],
                 "aircraft_type": response["aircraft_type"],
                 "origin": response["origin"]["code"],
@@ -146,6 +148,8 @@ def get_data(last_timestamp, prev_data_length):
             # todo: actual calculation instead of hammering api
             return 1
         else:
+            logger.info(f"Displaying {flight_no}")
+            logger.debug(output)
             print(output)
             return 0
 

@@ -50,8 +50,7 @@ def generate_image(mode="splash", target="COLOR_01.PRG"):
     with open(target, "wb") as f:
         f.write(
             hc1.generate_prg(
-                config["sign"].getint("brightness", 0),
-                [
+                frames=[
                     image_to_6bpp(
                         i.transpose(transpose_base.ROTATE_180)
                         if config["sign"].getboolean("flip", False)
@@ -59,7 +58,10 @@ def generate_image(mode="splash", target="COLOR_01.PRG"):
                     )
                     for i in frames
                 ],
-                frame_times,
+                frame_times=frame_times,
+                brightness=config["sign"].getint("brightness", 0),
+                display_height=int(config["sign"]["display_height"]),
+                display_width=int(config["sign"]["display_width"]),
             )
         )
 
