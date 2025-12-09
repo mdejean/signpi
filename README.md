@@ -3,6 +3,8 @@
 
 A subway arrivals sign using an off-the-shelf sign and a Raspberry Pi. Powered by the [goodservice.io](https://goodservice.io) API.
 
+New in 0.5!: Also supports buses & transit globally (font support only for latin-1 right now) via transit.land.
+
 ### The ugly part
 
 Each time the display updates, the sign will display `Load`, `ok ok`,
@@ -14,15 +16,14 @@ Each time the display updates, the sign will display `Load`, `ok ok`,
 
 You will need
 
-* A Raspberry Pi Zero W. These are unfortunately hard to get right now,
-but should be more widely available soon.
+* A Raspberry Pi Zero W
 * A 192 x 32 LED sign with a HC-1 controller.
 These can be found on ebay, aliexpress, amazon.
 
 Now, download the release zip: https://github.com/mdejean/signpi/releases/download/v0.4/signpi-0.4.zip
 
 1. Insert your microSD card into the reader and open up rpi-imager.
-Choose Raspberry Pi OS Lite
+Choose Raspberry Pi OS (unfortunately Lite does not have python3-pil preinstalled)
 
 2. Adjust the advanced settings, especially the wireless network settings.
 Uncheck the eject after complete option.
@@ -31,17 +32,16 @@ Uncheck the eject after complete option.
 
 4. Open up the 'bootfs' drive
 
-    i. edit `cmdline.txt`: After `rootwait` add ` modules-load=dwc2`  
-    ii. edit `config.txt`: At the bottom of the file, under `[all]` add a line with `dtoverlay=dwc2`  
-    iii. Rename `firstrun.sh` to `firstrun2.sh`  
-    iv. Copy `signpi.deb` and `firstrun.sh` to it.  
-
+    i. Copy `signpi.deb` to it.
+    ii. edit cmdline.txt: After rootwait add `modules-load=dwc2`
+    iii. edit config.txt: At the bottom of the file, under `[all]` add a line with `dtoverlay=dwc2`
+    iv. Add these two lines to the bottom of the file `user-data`
+        runcmd:
+            - dpkg -i /boot/firmware/signpi.deb
 5. Eject, put the microSD card in your Pi and plug it in to the sign.
 
 6. Wait about 6 minutes for the first-run process on the Pi to complete. When
-it's done you should have a functioning sign, displaying northbound arrivals
-at Nevins Street.
-
+it's done you should have a functioning sign, displaying arrivals at 72nd St.
 
 7. To change the station, unplug the Pi from the sign and plug
 it into your computer. It will appear after 15-20 seconds as a flash drive.

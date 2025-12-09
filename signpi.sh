@@ -1,24 +1,36 @@
 #!/bin/bash
 
 prefix=/usr
+backing_file=/var/local/mass_storage_backing
+mount_point=/media/mass_storage_gadget
 
 mass_storage_gadget() {
     if [ -n "$1" -a $1 = 'down' ] ; then
         modprobe -r g_mass_storage
     else
-        modprobe g_mass_storage file=/var/local/mass_storage_backing removable=y
+        modprobe g_mass_storage "file=$backing_file" removable=y
+    fi
+}
+
+loop_file=""
+
+
+setup_lo() {
+    if [ -z "$loop_file" ] ; then
+        loop_file=$(losetup -o512 --find $backing_file --show)
     fi
 }
 
 mount_backing() {
-    losetup -o512 /dev/loop0 /var/local/mass_storage_backing
-    mkdir -p /media/mass_storage_gadget
-    mount -o sync,flush,umask=000 -t vfat /dev/loop0 /media/mass_storage_gadget
+    setup_lo
+    mkdir -p "$mount_point"
+    mount -o sync,flush,umask=000 -t vfat "$loop_file" "$mount_point"
 }
 
 unmount_backing() {
-    losetup -d /dev/loop0
-    umount /media/mass_storage_gadget
+    umount $mount_point
+    losetup -d $loop_file
+    loop_file=""
 }
 
 # Reformat the backing with a new fat file system, optionally preserving the config.ini
@@ -29,39 +41,39 @@ reformat_backing() {
         preserve_config=0
     fi
     
-    if [ -e /var/local/mass_storage_backing -a "$preserve_config" -gt 0 ] ; then
+    if [ -e $backing_file -a "$preserve_config" -gt 0 ] ; then
         mount_backing
         #copy config to /tmp/ if exists
-        if [ -e /media/mass_storage_gadget/config.ini ] ; then
-            cp /media/mass_storage_gadget/config.ini /tmp/
+        if [ -e $mount_point/config.ini ] ; then
+            cp $mount_point/config.ini /tmp/
         fi
         unmount_backing
     fi
 
     # create backing file
-    dd if=/dev/zero of=/var/local/mass_storage_backing bs=1M seek=16 count=0
-    parted --script /var/local/mass_storage_backing mktable msdos 'mkpart primary fat32 0 -0'
-    losetup -o512 /dev/loop0 /var/local/mass_storage_backing
-    mkfs.vfat /dev/loop0
+    dd if=/dev/zero of=$backing_file bs=1M seek=16 count=0
+    parted --script $backing_file mktable msdos 'mkpart primary fat32 0 -0'
+    setup_lo
+    mkfs.vfat $loop_file
 
     mount_backing
     
     if [ "$preserve_config" -gt 0 -a -e /tmp/config.ini ] ; then
-        cp /tmp/config.ini /media/mass_storage_gadget/
+        cp /tmp/config.ini $mount_point/
     else
-        cp config.ini /media/mass_storage_gadget/
+        cp config.ini $mount_point/
     fi
     
     unmount_backing
 }
 
-if [ -e /var/local/mass_storage_backing ] ; then
+if [ -e $backing_file ] ; then
     # Load user-edited config.ini
     mount_backing
 
     # If mount failed or went read-only due to filesystem errors, reformat and try to salvage config.ini
-    if ! mount -l -t vfat | grep -q /media/mass_storage_gadget \
-        || mount -l -t vfat | grep loop0 | grep -q '[(,]ro[),]' ; then
+    if ! mount -l -t vfat | grep -q $mount_point \
+        || mount -l -t vfat | grep loop | grep -q '[(,]ro[),]' ; then
         unmount_backing
         reformat_backing 1
         mount_backing
@@ -93,7 +105,7 @@ while [ $terminated -eq 0 ] ; do
     
     usb_speed=$(cat /sys/devices/platform/soc/*/udc/*/current_speed)
     
-    if [ $usb_speed = "full-speed" ] ; then
+    if [ "$usb_speed" = "full-speed" ] ; then
         echo "Connected to sign"
         # Disconnect the mass storage function, wait so the sign loads
         mass_storage_gadget down
@@ -112,12 +124,14 @@ while [ $terminated -eq 0 ] ; do
             fi
         done
         
-        mount_backing
-        
-        echo "$data" | $prefix/lib/signpi/generate_image.py
-        
-        unmount_backing
-    elif [ $usb_speed = "high-speed" ] ; then
+        if [ $terminated -eq 0 ] ; then
+            mount_backing
+            
+            echo "$data" | $prefix/lib/signpi/generate_image.py
+            
+            unmount_backing
+        fi
+    elif [ "$usb_speed" = "high-speed" ] ; then
         echo "Connected to computer"
         while [ $terminated -eq 0 ] ; do
             sleep 1 # sync a lot in the hopes that we don't lose anything when the user unplugs

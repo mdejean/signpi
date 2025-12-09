@@ -7,6 +7,7 @@ signpi (0.5) unstable; urgency=medium
   * Gray out trips without real time data (is_assigned = false or no estimated)
   * Allow odd numbers of trips
   * Much refactoring
+  * Trixie support
 
  -- Marcel Dejean <marcel@dejean.nyc>  Sat, 06 Dec 2025 19:42:46 -0500
 
