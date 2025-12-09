@@ -295,8 +295,7 @@ def draw_trip(img, y, order, route, eta, alert):
     dest = route["destination"].translate({ord("&"): "+", ord("^"): "-"})
     if main_font.getlength(dest) > available_space:
         # TODO: auto-abbreviation
-        l = main_font.getlength(dest)
-        dest = dest[: (len(dest) * available_space) // l - 1]
+        dest = dest[: int((len(dest) * available_space) // main_font.getlength(dest) - 1)]
 
     draw.text(
         (x, y),
