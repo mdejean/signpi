@@ -5,6 +5,8 @@ A subway arrivals sign using an off-the-shelf sign and a Raspberry Pi. Powered b
 
 New in 0.5!: Also supports buses & transit globally (font support only for latin-1 right now) via transit.land.
 
+![transitland](https://github.com/user-attachments/assets/41783b32-cac2-4f72-9219-a16badf8f948)
+
 ### The ugly part
 
 Each time the display updates, the sign will display `Load`, `ok ok`,
