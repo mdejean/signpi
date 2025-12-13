@@ -1,5 +1,12 @@
+signpi (0.5.1) unstable; urgency=medium
+
+  * Fix a bug where config was not being read from storage for get_data
+
+ -- Marcel Dejean <marcel@dejean.nyc>  Sat, 13 Dec 2025 14:48:05 -0500
+
 signpi (0.5) unstable; urgency=medium
 
+  [ Marcel Dejean ]
   * Add transit.land support to mode=subway (now a misnomer!).
   * One character routes use bullets, others (most buses) use boxes.
   * Add support for multiple stops, multiple directions, and route filter.
