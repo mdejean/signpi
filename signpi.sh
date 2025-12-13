@@ -110,6 +110,8 @@ while [ $terminated -eq 0 ] ; do
         # Disconnect the mass storage function, wait so the sign loads
         mass_storage_gadget down
         
+        mount_backing
+        
         # if get_data returns error (1), retry until it is successful
         while [ $terminated -eq 0 ] ; do
             # get_data might wait a fixed period instead of returning 1
@@ -125,12 +127,10 @@ while [ $terminated -eq 0 ] ; do
         done
         
         if [ $terminated -eq 0 ] ; then
-            mount_backing
-            
             echo "$data" | $prefix/lib/signpi/generate_image.py
-            
-            unmount_backing
         fi
+        
+        unmount_backing
     elif [ "$usb_speed" = "high-speed" ] ; then
         echo "Connected to computer"
         while [ $terminated -eq 0 ] ; do

@@ -24,6 +24,7 @@ mode=subway
 brightness=0
 display_height=32
 display_width=192
+debug=false
 
 [subway]
 api_key=

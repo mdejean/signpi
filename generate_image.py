@@ -44,8 +44,10 @@ def generate_image(mode="splash", target="COLOR_01.PRG"):
         frames, frame_times = layout.splash_screen()
 
     # for debugging
-    for f in frames:
-        f.show()
+    if config["sign"].getboolean("debug", False):
+        print(f"{len(n)} frames, frame_times = {frame_times}")
+        for f in frames:
+            f.show()
 
     with open(target, "wb") as f:
         f.write(
